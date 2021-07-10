@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import roslib; roslib.load_manifest('ros_decawave')
 import rospy
 import tf
@@ -29,7 +29,7 @@ class DecawaveDriver(object):
         self.get_uart_mode()
         self.switch_uart_mode()
         self.get_tag_status()
-        self.get_tag_version()
+        #self.get_tag_version()
         self.anchors = AnchorArray()
         self.anchors.anchors = []
         self.tag = Tag()
@@ -96,10 +96,11 @@ class DecawaveDriver(object):
         while(self.ser.inWaiting()==0):
             pass
         status = self.ser.readline()
-        data_ = struct.unpack('<BBBBBB', bytearray(status))
+        data_ = struct.unpack('<BBBBBBB', bytearray(status))
         if data_[0] != 64 and data_[2] != 0:
             rospy.logwarn("Get Status Failed! Packet does not match!")
             print("%s", data_)
+            
         if data_[5] == 3:
             rospy.loginfo("\33[96mTag is CONNECTED to a UWB network and LOCATION data are READY!\33[0m")
         elif data_[5] == 2:

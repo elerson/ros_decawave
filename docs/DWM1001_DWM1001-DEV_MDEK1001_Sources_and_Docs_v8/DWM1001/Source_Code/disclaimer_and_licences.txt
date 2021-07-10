@@ -15,6 +15,7 @@ DISCLAIMER
    (c)	The Decawave DRTLS Gateway Application which supplies a gateway function (on a Raspberry Pi ®) routing DRTLS location and sensor data traffic onto an IP based network (e.g. LAN), and consists of the following components:
       •	DRTLS Gateway Linux Kernel Module
       •	DRTLS Gateway Daemon
+	  •	DRTLS Gateway Proxy
       •	DRTLS Gateway MQTT Broker
       •	DRTLS Gateway Web Manager 
 
