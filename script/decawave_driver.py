@@ -33,6 +33,7 @@ class DecawaveDriver(object):
         self.anchors = AnchorArray()
         self.anchors.anchors = []
         self.tag = Tag()
+        self.sensor_last_rcv_hash = {}
 
 
     def get_uart_mode(self):
@@ -138,11 +139,21 @@ class DecawaveDriver(object):
                 return None
         self.anchors.anchors = [] ## Clean Anchors list
         for i in range(self.tag.n_anchors):
-
+        
             data_ = self.ser.read(self.anchor_packet_size)
             data_ = struct.unpack('<HlBlllB', bytearray(data_))
+            id_ = str(format(data_[0], '04X'))
+            h_ = hash(data_) 
+            if(id_ not in self.sensor_last_rcv_hash):
+                self.sensor_last_rcv_hash[id_] = h_
+            
+            if(self.sensor_last_rcv_hash[id_] == h_):
+                continue
+            
+            self.sensor_last_rcv_hash[id_] = h_
+            
             a = Anchor()
-            a.header.frame_id = str(format(data_[0], '04X'))
+            a.header.frame_id = id_
             a.header.stamp = rospy.Time.now()
             a.distance = float(data_[1])/1000.0
             a.dist_qf = float(data_[2])/100.0
@@ -151,6 +162,7 @@ class DecawaveDriver(object):
             a.z = float(data_[5])/1000.0
             a.qf = float(data_[6])/100.0
             self.anchors.anchors.append(a)
+        #print(self.anchors)
 
 
     def tf_callback(self, timer):
